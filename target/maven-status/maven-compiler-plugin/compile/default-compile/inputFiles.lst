@@ -1,0 +1,4 @@
+/workspaces/task-manager-api/src/main/java/com/portfolio/taskmanager/TaskManagerApplication.java
+/workspaces/task-manager-api/src/main/java/com/portfolio/taskmanager/repository/TaskRepository.java
+/workspaces/task-manager-api/src/main/java/com/portfolio/taskmanager/controller/TaskController.java
+/workspaces/task-manager-api/src/main/java/com/portfolio/taskmanager/model/Task.java

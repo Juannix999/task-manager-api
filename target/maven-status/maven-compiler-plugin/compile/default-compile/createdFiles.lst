@@ -1,0 +1,4 @@
+com/portfolio/taskmanager/TaskManagerApplication.class
+com/portfolio/taskmanager/controller/TaskController.class
+com/portfolio/taskmanager/repository/TaskRepository.class
+com/portfolio/taskmanager/model/Task.class
