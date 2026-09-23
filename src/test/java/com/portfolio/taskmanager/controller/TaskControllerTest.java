@@ -6,6 +6,9 @@ import com.portfolio.taskmanager.exception.TaskNotFoundException;
 import com.portfolio.taskmanager.model.Task;
 import com.portfolio.taskmanager.service.TaskService;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -44,12 +47,32 @@ class TaskControllerTest {
     void shouldReturnAllTasks() throws Exception {
         Task task = new Task("Aprender Spring", "Crear API", false);
         task.setId(1L);
-        when(taskService.getAllTasks()).thenReturn(List.of(task));
+        Page<Task> page = new PageImpl<>(List.of(task), PageRequest.of(0, 10), 1);
+        when(taskService.getAllTasks(null, null, 0, 10, "id", "asc")).thenReturn(page);
 
         mockMvc.perform(get("/api/tasks"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].title").value("Aprender Spring"));
+                .andExpect(jsonPath("$.content[0].id").value(1))
+                .andExpect(jsonPath("$.content[0].title").value("Aprender Spring"))
+                .andExpect(jsonPath("$.totalElements").value(1));
+    }
+
+    @Test
+    void shouldReturnFilteredTasks() throws Exception {
+        Task task = new Task("Task filtrada", "Detalle", true);
+        task.setId(5L);
+        Page<Task> page = new PageImpl<>(List.of(task), PageRequest.of(0, 5), 1);
+        when(taskService.getAllTasks(true, "filtrada", 0, 5, "title", "desc")).thenReturn(page);
+
+        mockMvc.perform(get("/api/tasks")
+                        .param("completed", "true")
+                        .param("title", "filtrada")
+                        .param("page", "0")
+                        .param("size", "5")
+                        .param("sortBy", "title")
+                        .param("direction", "desc"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].completed").value(true));
     }
 
     @Test
@@ -116,5 +139,12 @@ class TaskControllerTest {
                         .content(objectMapper.writeValueAsString(invalidTask)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.title").exists());
+    }
+
+    @Test
+    void shouldFailWhenPageIsNegative() throws Exception {
+        mockMvc.perform(get("/api/tasks").param("page", "-1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").exists());
     }
 }

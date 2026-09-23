@@ -3,12 +3,15 @@ package com.portfolio.taskmanager.controller;
 import com.portfolio.taskmanager.model.Task;
 import com.portfolio.taskmanager.service.TaskService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+@Validated
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskController {
@@ -20,8 +23,16 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> getAllTasks() {
-        return taskService.getAllTasks();
+    public Page<Task> getAllTasks(
+            @RequestParam(required = false) Boolean completed,
+            @RequestParam(required = false) String title,
+            @RequestParam(defaultValue = "0") @Min(value = 0, message = "page debe ser mayor o igual a 0") int page,
+            @RequestParam(defaultValue = "10") @Min(value = 1, message = "size debe ser mayor o igual a 1")
+            @Max(value = 100, message = "size no debe superar 100") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+        return taskService.getAllTasks(completed, title, page, size, sortBy, direction);
     }
 
     @GetMapping("/{id}")
