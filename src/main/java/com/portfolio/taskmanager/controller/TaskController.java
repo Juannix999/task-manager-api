@@ -1,8 +1,10 @@
 package com.portfolio.taskmanager.controller;
 
 import com.portfolio.taskmanager.model.Task;
-import com.portfolio.taskmanager.repository.TaskRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.portfolio.taskmanager.service.TaskService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,16 +13,35 @@ import java.util.List;
 @RequestMapping("/api/tasks")
 public class TaskController {
 
-    @Autowired
-    private TaskRepository taskRepository;
+    private final TaskService taskService;
+
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
+    }
 
     @GetMapping
     public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+        return taskService.getAllTasks();
+    }
+
+    @GetMapping("/{id}")
+    public Task getTaskById(@PathVariable Long id) {
+        return taskService.getTaskById(id);
     }
 
     @PostMapping
-    public Task createTask(@RequestBody Task task) {
-        return taskRepository.save(task);
+    public ResponseEntity<Task> createTask(@Valid @RequestBody Task task) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(taskService.createTask(task));
+    }
+
+    @PutMapping("/{id}")
+    public Task updateTask(@PathVariable Long id, @Valid @RequestBody Task task) {
+        return taskService.updateTask(id, task);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteTask(@PathVariable Long id) {
+        taskService.deleteTask(id);
     }
 }

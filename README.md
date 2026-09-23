@@ -1,68 +1,63 @@
-# 🚀 Task Manager API - Backend con Spring Boot
+# Task Manager API
 
-API RESTful desarrollada en **Java 17** y **Spring Boot 3.2.5** para la gestión completa de tareas. Este proyecto forma parte de mi portafolio profesional como Analista Programador, enfocado en buenas prácticas de arquitectura backend, persistencia de datos y documentación de servicios.
+API REST para gestión de tareas desarrollada con **Java 17** y **Spring Boot 3.2.5**.
 
----
+## Tecnologías
+- Spring Web
+- Spring Data JPA
+- Spring Validation
+- H2 Database
+- Swagger / OpenAPI (`springdoc`)
+- JUnit + MockMvc
 
-## 🛠️ Tecnologías y Dependencias
-* **Java 17**
-* **Spring Boot 3.2.5**
-* **Spring Data JPA** (para la capa de persistencia y abstracción de base de datos)
-* **H2 Database** (Base de datos relacional en memoria para desarrollo y pruebas rápidas)
-* **Springdoc OpenAPI / Swagger** (Documentación interactiva de la API)
-* **Maven** (Gestión de dependencias y empaquetado)
+## Estructura
+- `controller/`: endpoints REST
+- `service/`: lógica de negocio
+- `repository/`: acceso a datos
+- `model/`: entidad `Task`
+- `exception/`: manejo global de errores
 
----
-
-## 📂 Estructura del Proyecto
-El código sigue una arquitectura estándar organizada en capas bajo el paquete `com.portfolio.taskmanager`:
-- **`model/`**: Entidades JPA (`Task.java`) mapeadas a la base de datos con anotaciones OpenAPI.
-- **`repository/`**: Interfaces de acceso a datos que extienden de `JpaRepository` (`TaskRepository.java`).
-- **`controller/`**: Controladores REST que exponen los endpoints del CRUD con anotaciones informativas (`TaskController.java`).
-
----
-
-## ⚙️ Endpoints de la API (CRUD)
-
-La API expone los siguientes endpoints bajo la ruta base `/api/tasks`:
+## Endpoints
+Base path: `/api/tasks`
 
 | Método | Endpoint | Descripción |
-| :--- | :--- | :--- |
-| **GET** | `/api/tasks` | Retorna una lista con todas las tareas registradas. |
-| **POST** | `/api/tasks` | Crea y almacena una nueva tarea (recibe JSON en el cuerpo). |
-| **PUT** | `/api/tasks/{id}` | Actualiza los datos de una tarea existente buscándola por su ID. |
-| **DELETE** | `/api/tasks/{id}` | Elimina una tarea de la base de datos utilizando su ID. |
+|---|---|---|
+| GET | `/api/tasks` | Lista todas las tareas |
+| GET | `/api/tasks/{id}` | Obtiene una tarea por ID |
+| POST | `/api/tasks` | Crea una tarea |
+| PUT | `/api/tasks/{id}` | Actualiza una tarea existente |
+| DELETE | `/api/tasks/{id}` | Elimina una tarea |
 
----
-
-## 🧪 Ejemplo de Payload (POST / PUT)
-Para registrar o actualizar una tarea, se debe enviar un objeto JSON con la siguiente estructura:
-
+## Payload JSON
 ```json
 {
   "title": "Aprender Spring Boot",
-  "description": "Completar la configuración de la API REST en Codespaces",
+  "description": "Completar API para portafolio",
   "completed": false
 }
+```
 
-Cómo Ejecutar el Proyecto Localmente
-Clona este repositorio:
+## Validaciones
+- `title` obligatorio
+- `title` máximo 100 caracteres
+- `description` máximo 300 caracteres
 
-Bash
-git clone [https://github.com/tu-usuario/tu-repositorio.git](https://github.com/tu-usuario/tu-repositorio.git)
-Entra al directorio del proyecto y compila/ejecuta usando Maven:
+## Respuestas de error
+- `404 Not Found` cuando la tarea no existe
+- `400 Bad Request` cuando falla validación
 
-Bash
-mvn clean spring-boot:run
-La aplicación se ejecutará por defecto en el puerto 8080.
-
-
----
-
-### ¿Cómo subirlo a tu GitHub desde Codespaces?
-Abre una terminal nueva en tu Codespace y ejecuta estos comandos sencillos para guardar y subir todo tu trabajo:
-
+## Ejecutar local
 ```bash
-git add .
-git commit -m "Proyecto Task Manager completado: CRUD, H2 y Swagger"
-git push origin main
+mvn clean spring-boot:run
+```
+
+Swagger UI:
+- `http://localhost:8080/swagger-ui/index.html`
+
+H2 Console:
+- `http://localhost:8080/h2-console`
+
+## Ejecutar pruebas
+```bash
+mvn test
+```
