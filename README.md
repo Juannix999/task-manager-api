@@ -76,13 +76,53 @@ H2 Console:
 mvn test
 ```
 
-## Deploy (Docker / Render / Railway)
-Construir imagen local:
+## Ejecutar con Docker Compose
+1. Construye y levanta el contenedor:
+```bash
+docker compose up --build
+```
+
+2. Verifica la API:
+```bash
+http://localhost:8080/swagger-ui/index.html
+```
+
+3. Detén el servicio:
+```bash
+docker compose down
+```
+
+## Deploy paso a paso en Render
+1. Sube este repositorio a GitHub con `Dockerfile` y `docker-compose.yml`.
+2. En Render, crea un nuevo servicio: **New +** → **Web Service**.
+3. Conecta tu repositorio `task-manager-api`.
+4. En configuración:
+   - **Environment**: `Docker`
+   - **Branch**: `main` (o tu rama de despliegue)
+   - **Region**: la más cercana
+5. En variables de entorno agrega:
+   - `PORT=8080`
+6. Guarda y presiona **Create Web Service**.
+7. Cuando finalice el build, abre la URL pública y prueba:
+   - `/swagger-ui/index.html`
+
+## Deploy paso a paso en Railway
+1. En Railway, crea un proyecto nuevo con **Deploy from GitHub repo**.
+2. Selecciona este repositorio.
+3. Railway detectará el `Dockerfile` automáticamente.
+4. En variables agrega:
+   - `PORT=8080`
+5. Espera el build y el deploy automático.
+6. Abre el dominio generado por Railway y prueba:
+   - `/swagger-ui/index.html`
+
+## Deploy local con Docker (alternativa)
+Construir imagen manual:
 ```bash
 docker build -t task-manager-api .
 ```
 
-Ejecutar contenedor:
+Ejecutar contenedor manual:
 ```bash
 docker run -p 8080:8080 task-manager-api
 ```
